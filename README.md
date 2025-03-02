@@ -73,10 +73,102 @@ Para realizar el diseño de las celdas automatizadas y el desarrollo de los entr
 
 ## Celda Robotizada: IRB 6700
 
+El robot desempeña un papel de **Pick and Place**, lo cual es clave en la automatización del proceso de inyección, encargándose de la extracción de piezas y el cambio de moldes en la inyectora. La producción se organiza en ciclos secuenciales para los moldes **Qammar, Propulser y Trompo de Batalla**, alternando su uso tras alcanzar la meta diaria de cada producto.
+
+Para garantizar una operación eficiente y segura, el sistema cuenta con **sensores de colisión** para la detección de herramientas y **sensores de posición** para verificar la correcta instalación de los moldes en la inyectora.
+
+## Procedimiento de Operación
+
+El procedimiento de operación se estructura de la siguiente manera:
+
+1. El robot inicia en **posición de "home"**, con todas las herramientas en la estación de almacenamiento y el **molde Qammar** montado en la inyectora.
+2. Se selecciona la herramienta de extracción de piezas y se inicia el ciclo de producción.
+3. El robot ejecuta la rutina de extracción tras cada inyección, repitiéndose hasta alcanzar la **meta diaria** del producto.
+4. Alcanzado el objetivo, la inyectora se detiene y el robot cambia a la herramienta de manipulación de moldes.
+5. Se realiza el **cambio de molde**, verificando su correcta instalación antes de continuar.
+6. El proceso se repite para los tres moldes hasta completar la producción diaria.
+7. Al finalizar la jornada, el **molde Qammar** queda instalado en la inyectora para el siguiente ciclo.
+
+Este esquema operativo **minimiza tiempos de inactividad y optimiza el uso de los recursos**, asegurando una producción continua y eficiente.
+
+Para garantizar una sincronización precisa entre la extracción de la pieza desde la inyectora y el proceso de inyección, se ha estandarizado el tiempo de ciclo de ambos procesos. Esta sincronización es fundamental para evitar colisiones entre la herramienta y el molde, así como posibles impactos entre las piezas recién inyectadas, el molde o la propia inyectora.
+
+
 ### Layout de la Celda
-El **Powder Auger Feeder 4** alimenta la celda con pellets de ABS, permitiendo la adición de colorantes. Tras la inyección, las piezas son extraídas automáticamente y enviadas al **proceso de desbarbado**.
+El ingreso de materia prima a la celda robotizada se realiza a través de un  **Powder Auger Feeder 4**, un alimentador diseñado para la dosificación precisa de material particulado, que puede ser empleado para suministrar material polimérico en formato de pellets. Este sistema permite la incorporación opcional de partículas de colorante para modificar la apariencia del producto final según los requerimientos de producción. La celda està delimitada por la barreras de contenciòn, las cuales suman un àrea de 
+
+![ef1b14b86163f6d00819b97d7a4f8b8f7404c24e](https://github.com/user-attachments/assets/e7ac21cd-bad7-41a6-a6d0-e5537db7067f)
+
+Una vez completado el proceso de inyección, las piezas moldeadas son extraídas y transportadas fuera de la celda para continuar con el proceso de desbarbado, asegurando así su adecuada preparación para el ensamblaje del juguete.
+
+![a88b96ccdf0a5fc9ca29ae0ede7bd0256c92e196](https://github.com/user-attachments/assets/ffae11c4-e3f7-4410-9c99-828adadd2a10)
+
+
 
 ### Componentes
+En esta sección se detallan los elementos que se usarán en las celdas. La selección de los componentes se hizo en base a las normativas **IEC 60204-1** e **ISO 10218-1:2011**.
+
+
+- **IRB 6700 300-270:** Robot seleccionado para esta tarea, diseñado para mover cargas pesadas (más de 200 kg). Su tamaño le permite alcanzar los elementos y estaciones de la celda sin dificultad, como la estación de herramientas, la banda transportadora y la inyectora.
+
+![image](https://github.com/user-attachments/assets/c2599466-26ac-4dac-937d-9f7e55ccf8df)
+
+
+- **IRC5 u OmniCore:** Controlador de ABB para integrarse con el IRB 6700.
+
+- **370 E GOLDEN ELECTRIC 2:** Inyectora seleccionada para volúmenes de producción bajos a medios. Destaca por su facilidad en la extracción y cambio de moldes, optimizando el tiempo de producción.
+
+- **Conveyor 950 4000 h2:** Banda transportadora utilizada para la entrada y salida de material en la celda. Su disponibilidad en el catálogo de ABB facilita su integración con el robot.
+
+- **Barreras físicas:** Se debe considerar su robustez, facilidad de instalación y compatibilidad con los componentes de seguridad.
+
+- **Paros de emergencia:** Dispositivo que permite detener el robot de forma inmediata en casos de emergencia. Se selecciona un pulsador normalmente cerrado, ABB Jokab Safety E-Stop Button (SFC-EB3A).
+
+- **Paros de seguridad:** Se integra un relé de seguridad para desconectar el robot de la red eléctrica en caso de fallos. Se selecciona el ABB Jokab Safety Pluto Safety PLC (Pluto S20 v2), que permite diagnósticos en tiempo real y redundancia a fallos críticos.
+
+- **Escáneres Láser:** Detectan la presencia en el área de trabajo de la celda robotizada. Se usa el modelo SICK S3000 Advance, configurable para distintas distancias de detección. Detiene el ciclo de trabajo si detecta a un operador en la celda.
+
+- **Accionamiento:** Se realiza con un tablero de control con paradas de emergencia integradas. También puede usarse en conjunto con FlexPendant de ABB.
+
+- **ABB SafeMove2:** Solución de software y hardware para mejorar la seguridad de los robots ABB, eliminando la necesidad de hardware adicional.
+
+- **Patlite Signal Tower:** Proporciona información visual clara del estado operativo del robot. Se selecciona la LR6 DC-ASSY BUZZER POLE-SZL001 Series 60mm LED Signal Tower Lights, instaladas en cada esquina de la celda.
+
+#### Efectores Finales
+
+Para efectuar el cambio entre moldes, se requiere una herramienta específica que se enrosca en la parte superior del molde. 
+
+Dado que el molde pesa 100 kg, el tornillo debe soportar una carga de 981 N:
+
+$$
+F = 981 \text{ N}
+$$
+
+El área de la sección transversal del tornillo se calcula como:
+
+$$
+A = \frac{\pi}{4} d^2 = \frac{\pi}{4} (30 \text{ mm})^2 = 706.86 \text{ mm}^2
+$$
+
+El esfuerzo axial resultante es:
+
+$$
+\sigma = \frac{F}{A} = \frac{981}{706.86} = 1.39 \text{ MPa}
+$$
+
+Dado que este valor es bajo, pero el entorno industrial puede exponerlo a químicos y humedad, se selecciona **acero inoxidable AISI 316**, que posee una resistencia a fluencia superior a 200-300 MPa, garantizando su resistencia en esta aplicación.
+
+![f7aa2898-fb5e-4e5e-a5b4-a154d49230d9](https://github.com/user-attachments/assets/e07e9394-2c72-4fdd-9254-c7a3aaecb69e)
+
+Para la extracción de las piezas, se opta por una **pinza neumática**.
+
+![ec3173f1-17ac-4edb-bb8b-4776b827fe15](https://github.com/user-attachments/assets/f50d2a13-6d55-46e2-b6f7-5e86100503ac)
+
+
+- **Estación de herramientas:** Permite el intercambio de herramientas de forma precisa sin intervención humana. Se implementa un sistema basado en el diseñado por Jorge Yagüez Aparicio en la Universidad Carlos III.
+
+Como sìntesis de lo anterior, se muestra la tabla de componentes de la celda:
+
 | Cantidad | Componente |
 |----------|--------------------------------|
 | 1        | **Robot Industrial** - ABB IRB 6700 300-270 |
@@ -92,14 +184,34 @@ El **Powder Auger Feeder 4** alimenta la celda con pellets de ABS, permitiendo l
 | 4        | **Sistema de Señalización** - Patlite Signal Tower LR6 |
 
 ### Duty Cycle y Throughput Time
+En la plataforma de RobotStudio se cronometró el tiempo  para la rutina de cambio de moldes y para la extracción de la pieza de la inyectora. En el caso de extracción de piezas el duty cycle y el throughtput time.  
+
+
 | Rutina         | Duty Cycle |
 |---------------|------------|
 | Extracción    | 10.9 s |
 | Cambio de Moldes | 52.0 s |
 
+
+# Agregación de Valor de la Celda Robotizada
+
+- *Reducción de tiempos de inactividad:* La automatización del cambio de moldes disminuye el tiempo de configuración de **2-3 horas a 1 minuto**, aumentando la disponibilidad de la inyectora y eliminando retrasos en la producción.
+
+- *Optimización del consumo energético:* La consolidación de inyectoras permite operar con una menor cantidad de equipos, **reduciendo significativamente el consumo eléctrico** y los costos de mantenimiento asociados.
+
+- *Incremento en la eficiencia operativa:* La extracción automatizada de piezas y la reducción de tiempos de ciclo permiten producir un mayor número de juguetes por día, **eliminando cuellos de botella y mejorando la planificación de producción**.
+
+- **Disminución de desperdicios y reprocesos:* La precisión del robot en la manipulación de moldes y piezas **minimiza errores en la inyección**, reduciendo pérdidas por defectos y optimizando el uso del material.
+
+
+
+
 ---
 
 ## Identificación de Peligros y Gestión de Riesgos
+
+Con la lectura y revisión del  Apéndice A de la norma ISO 10218-1:2011, se identificaron los siguientes riesgos en la celda.
+
 
 ### Riesgos Presentes
 - Contacto accidental con el robot.
@@ -113,25 +225,122 @@ El **Powder Auger Feeder 4** alimenta la celda con pellets de ABS, permitiendo l
 - Manipulación inadecuada del equipo en mantenimiento.
 - Atrapamiento en las bandas transportadoras.
 
-### Clasificación del Nivel de Riesgo (HRN)
-| Riesgo | Probabilidad | Severidad | HRN |
-|--------|-------------|-----------|-----|
-| Contacto con el robot | 3 | 4 | 12 |
-| Fallo en paro de seguridad | 2 | 5 | 10 |
-| Caída del molde | 3 | 4 | 12 |
-| Colisión con la inyectora | 2 | 4 | 8 |
-| Exposición a material fundido | 3 | 3 | 9 |
-| Pinzamiento en el robot | 3 | 3 | 9 |
-| Fallo en el control de seguridad | 1 | 5 | 5 |
-| Liberación de frenos | 2 | 4 | 8 |
-| Errores en mantenimiento | 3 | 3 | 9 |
-| Atrapamiento en bandas transportadoras | 4 | 4 | 16 |
+
+
 
 ### Medidas de Mitigación
 - Instalación de **barreras físicas y sensores de seguridad**.
 - Implementación de **sistemas de paro de emergencia**.
 - Mantenimiento preventivo en sistemas de fijación y frenos.
 - Capacitación del personal en protocolos de seguridad.
+
+## Frecuencia y Probabilidad de los Peligros
+
+Para la estimación de riesgos, se utilizó el puntaje **HRN**. Muchos de los componentes ya están diseñados para prevenir estos riesgos. Por ejemplo, la cortina láser desactiva el manipulador cuando detecta el ingreso de personal a la celda, evitando lesiones o accidentes fatales.
+
+### Evaluación de Riesgos HRN
+
+| **Riesgo** | **Probabilidad** | **Severidad** | **HRN** |
+|------------|----------------|--------------|---------|
+| Contacto accidental con el robot | 3 | 4 | 12 |
+| Fallo en la función de paro de seguridad | 2 | 5 | 10 |
+| Caída del molde | 3 | 4 | 12 |
+| Colisión del robot con la inyectora | 2 | 4 | 8 |
+| Exposición a temperaturas cambiantes y material fundido | 3 | 3 | 9 |
+| Pinzamiento entre la caja y el manipulador del robot | 3 | 3 | 9 |
+| Fallo en el sistema de control de seguridad | 1 | 5 | 5 |
+| Liberación de los frenos del robot | 2 | 4 | 8 |
+| Manipulación inadecuada del equipo durante el mantenimiento | 3 | 3 | 9 |
+| Atrapamiento en las bandas transportadoras | 1 | 4 | 15 |
+
+---
+
+## Escala de Probabilidad (P)
+
+| **Valor** | **Descripción** |
+|-----------|----------------|
+| 1 | Muy baja – Ocurre en condiciones excepcionales. |
+| 2 | Baja – Posible en circunstancias poco frecuentes. |
+| 3 | Media – Puede ocurrir ocasionalmente. |
+| 4 | Alta – Probable en operación normal. |
+| 5 | Muy alta – Casi seguro que ocurrirá en operación normal. |
+
+---
+
+## Escala de Severidad (S)
+
+| **Valor** | **Descripción** |
+|-----------|----------------|
+| 1 | Insignificante – Sin consecuencias o solo molestias menores. |
+| 2 | Leve – Daños leves, sin incapacidad significativa. |
+| 3 | Moderado – Lesiones tratables, incapacidad temporal. |
+| 4 | Grave – Lesiones serias, posible incapacidad permanente. |
+| 5 | Catastrófico – Muerte o lesiones irreversibles. |
+
+---
+
+## Clasificación del Nivel de Riesgo (HRN)
+
+| **Puntaje HRN** | **Nivel de Riesgo** |
+|-----------------|---------------------|
+| 1 - 4 | Bajo – No requiere medidas especiales más allá de la supervisión operativa. |
+| 5 - 9 | Moderado – Se recomienda implementar medidas de mitigación y supervisión. |
+| 10 - 15 | Alto – Es obligatorio implementar medidas de seguridad estrictas. |
+| 16 - 25 | Crítico – Riesgo inaceptable, es necesario rediseñar la celda o el proceso. |
+
+
+## Mitigación de los Peligros
+
+Se debe determinar cuáles riesgos requieren la incorporación de componentes de seguridad y cuáles pueden mitigarse mediante manuales, entrenamiento y el uso de Equipos de Protección Personal (EPP).
+
+### 1. Contacto accidental con el robot
+- Incorporar dispositivos de detección, como escáneres láser y cortinas de luz.
+- Instalar barreras físicas o protecciones móviles en el área de trabajo.
+- Establecer procedimientos de capacitación y uso de EPP para los operarios.
+
+### 2. Fallo en la función de paro de seguridad
+- Utilizar relés de seguridad redundantes.
+- Realizar mantenimientos preventivos y pruebas periódicas del sistema de paro.
+- Asegurar la integración y verificación continua del sistema de seguridad en el controlador.
+
+### 3. Caída del molde
+- Emplear dispositivos de sujeción robustos (abrazaderas o sistemas de fijación específicos).
+- Integrar sensores de posición que confirmen la sujeción correcta antes de iniciar movimientos.
+
+### 4. Colisión del robot con la inyectora
+- Establecer límites programados de seguridad y zonas restringidas mediante SafeMove2.
+- Instalar barreras físicas y sensores de proximidad para prevenir acercamientos peligrosos.
+- Realizar simulaciones en RobotStudio para validar las trayectorias.
+
+### 5. Exposición a temperaturas cambiantes y a material fundido de la inyectora
+- Proveer barreras térmicas y señalización que advierta sobre zonas calientes.
+- Suministrar EPP específico (guantes resistentes al calor, protección facial, ropa térmica) en caso de que se necesite entrar a la celda.
+
+### 6. Pinzamiento entre los moldes y el manipulador del robot
+- Establecer controles de acceso y paros de emergencia específicos.
+- Integrar sensores de colisión en áreas de posible impacto para detener el proceso.
+
+### 7. Fallo en el sistema de control de seguridad
+- Emplear un PLC de seguridad redundante.
+- Realizar pruebas de diagnóstico en tiempo real y mantenimiento preventivo.
+- Incluir simulaciones en RobotStudio para validar el sistema antes de su operación.
+
+### 8. Liberación de los frenos del robot
+- Incorporar un sistema de frenos redundante y realizar inspecciones periódicas.
+- Asegurar procedimientos de puesta en marcha y verificación antes de iniciar operaciones.
+- Capacitar al personal de mantenimiento en la operación y verificación de los frenos.
+
+### 9. Manipulación inadecuada del equipo durante el mantenimiento
+- Desarrollar y seguir procedimientos de mantenimiento estandarizados.
+- Proveer entrenamiento regular y el uso de EPP adecuado (guantes, protección ocular y ropa de seguridad).
+- Implementar supervisión en las actividades de mantenimiento.
+
+### 10. Atrapamiento en las bandas transportadoras
+- Instalar protecciones fijas y móviles en las bandas transportadoras.
+- Integrar sensores de seguridad y paros de emergencia en la línea de producción.
+
+
+
 
 ---
 
