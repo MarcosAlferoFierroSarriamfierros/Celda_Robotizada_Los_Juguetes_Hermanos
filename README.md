@@ -352,4 +352,3 @@ Se debe determinar cuáles riesgos requieren la incorporación de componentes de
 
 ---
 
-Este archivo en Markdown mantiene la estructura del documento original y está optimizado para ser leído en **GitHub**. Si necesitas modificaciones o agregar imágenes, házmelo saber. 🚀
